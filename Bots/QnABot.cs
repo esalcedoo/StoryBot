@@ -10,7 +10,7 @@ using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.BotBuilderSamples
+namespace QnABot.Bots
 {
     public class QnABot : ActivityHandler
     {

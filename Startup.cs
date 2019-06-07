@@ -9,7 +9,7 @@ using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.BotBuilderSamples
+namespace QnABot
 {
     public class Startup
     {

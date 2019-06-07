@@ -4,7 +4,7 @@
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 
-namespace Microsoft.BotBuilderSamples
+namespace QnABot
 {
     public class ConfigurationCredentialProvider : SimpleCredentialProvider
     {
