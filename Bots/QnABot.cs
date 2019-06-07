@@ -1,50 +1,37 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
-using Microsoft.Bot.Builder.AI.QnA;
 using Microsoft.Bot.Schema;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using QnABot.Models;
+using QnABot.Services;
 
 namespace QnABot.Bots
 {
     public class QnABot : ActivityHandler
     {
-        private readonly IConfiguration _configuration;
         private readonly ILogger<QnABot> _logger;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly QnAService _qnAService;
 
-        public QnABot(IConfiguration configuration, ILogger<QnABot> logger, IHttpClientFactory httpClientFactory)
+        public QnABot(ILogger<QnABot> logger, QnAService qnaService)
         {
-            _configuration = configuration;
             _logger = logger;
-            _httpClientFactory = httpClientFactory;
+            _qnAService = qnaService;
         }
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            var httpClient = _httpClientFactory.CreateClient();
-
-            var qnaMaker = new QnAMaker(new QnAMakerEndpoint
-            {
-                KnowledgeBaseId = _configuration["QnAKnowledgebaseId"],
-                EndpointKey = _configuration["QnAAuthKey"],
-                Host = _configuration["QnAEndpointHostName"]
-            },
-            null,
-            httpClient);
-
             _logger.LogInformation("Calling QnA Maker");
 
-            // The actual call to the QnA Maker service.
-            var response = await qnaMaker.GetAnswersAsync(turnContext);
-            if (response != null && response.Length > 0)
+            QnAAnswerModel response = await _qnAService
+                .GenerateAnswer(turnContext.Activity.Text, turnContext.Activity.Locale);
+
+            if (response != null)
             {
-                await turnContext.SendActivityAsync(MessageFactory.Text(response[0].Answer), cancellationToken);
+                await turnContext.SendActivityAsync(MessageFactory.Text(response.Answer), cancellationToken);
             }
             else
             {
