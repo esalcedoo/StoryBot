@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
@@ -31,7 +33,20 @@ namespace QnABot.Bots
 
             if (response != null)
             {
-                await turnContext.SendActivityAsync(MessageFactory.Text(response.Answer), cancellationToken);
+                IEnumerable<string> suggestedActions = response.Context?.Prompts?.Select(p => p.DisplayText);
+
+                if (suggestedActions != null)
+                {
+                    await turnContext.SendActivityAsync(
+                        MessageFactory.SuggestedActions(
+                            response.Context?.Prompts?.Select(p => p.DisplayText),
+                            response.Answer), cancellationToken);
+                }
+                else
+                {
+                    await turnContext.SendActivityAsync(
+                        MessageFactory.Text(response.Answer), cancellationToken);
+                }
             }
             else
             {
