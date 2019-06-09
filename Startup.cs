@@ -10,6 +10,7 @@ using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StoryBot.Configuration;
 using StoryBot.Services;
 
 namespace StoryBot
@@ -38,12 +39,8 @@ namespace StoryBot
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, Bots.StoryBot>();
 
-            services.AddHttpClient<QnAService>(client =>
-                {
-                    client.BaseAddress = new Uri($"{_configuration["QnAEndpointHostName"]}/knowledgebases/{_configuration["QnAKnowledgebaseId"]}/");
-                    client.DefaultRequestHeaders.Add("Authorization", $"EndpointKey {_configuration["QnAAuthKey"]}");
-                }
-            );
+            services.AddQnAService(_configuration);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
