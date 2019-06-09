@@ -11,6 +11,7 @@ using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StoryBot.Configuration;
+using StoryBot.Dialogs;
 using StoryBot.Services;
 
 namespace StoryBot
@@ -36,8 +37,17 @@ namespace StoryBot
             // Create the Bot Framework Adapter with error handling enabled. 
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
+            // Create the storage we'll be using for User and Conversation state. (Memory is great for testing purposes.)
+            services.AddSingleton<IStorage, MemoryStorage>();
+
+            // Create the Conversation state. (Used by the Dialog system itself.)
+            services.AddSingleton<ConversationState>();
+
+            // The Dialog that will be run by the bot.
+            services.AddSingleton<QnAStoryDialog>();
+
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, Bots.StoryBot>();
+            services.AddTransient<IBot, Bots.StoryBot<QnAStoryDialog>>();
 
             services.AddQnAService(_configuration);
 

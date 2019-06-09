@@ -6,51 +6,50 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
+using StoryBot.Dialogs;
 using StoryBot.Models;
 using StoryBot.Services;
 
 namespace StoryBot.Bots
 {
-    public class StoryBot : ActivityHandler
+    public class StoryBot<T> : ActivityHandler where T : Dialog
     {
-        private readonly ILogger<StoryBot> _logger;
+        protected readonly Dialog _dialog;
+        private readonly ILogger<StoryBot<T>> _logger;
         private readonly QnAService _qnAService;
+        protected readonly BotState _conversationState;
 
-        public StoryBot(ILogger<StoryBot> logger, QnAService qnaService)
+        public StoryBot(T dialog, ILogger<StoryBot<T>> logger, QnAService qnaService, ConversationState conversationState)
         {
             _logger = logger;
             _qnAService = qnaService;
+            _conversationState = conversationState;
+            _dialog = dialog;
+        }
+        public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            await base.OnTurnAsync(turnContext, cancellationToken);
+
+            // Save any state changes that might have occured during the turn.
+            await _conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
         }
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Calling QnA Maker");
+            _logger.LogInformation("Running dialog with Message Activity.");
 
-            QnAAnswerModel response = await _qnAService
-                .GenerateAnswer(turnContext.Activity.Text, turnContext.Activity.Locale);
+            DialogSet dialogSet = new DialogSet(_conversationState.CreateProperty<DialogState>("StoryState"));
 
-            if (response != null)
+            dialogSet.Add(_dialog);
+            DialogContext dialogContext = await dialogSet.CreateContextAsync(turnContext, cancellationToken);
+            DialogTurnResult results = await dialogContext.ContinueDialogAsync(cancellationToken);
+
+            if (results.Status == DialogTurnStatus.Empty)
             {
-                IEnumerable<string> suggestedActions = response.Context?.Prompts?.Select(p => p.DisplayText);
-
-                if (suggestedActions != null)
-                {
-                    await turnContext.SendActivityAsync(
-                        MessageFactory.SuggestedActions(
-                            response.Context?.Prompts?.Select(p => p.DisplayText),
-                            response.Answer), cancellationToken);
-                }
-                else
-                {
-                    await turnContext.SendActivityAsync(
-                        MessageFactory.Text(response.Answer), cancellationToken);
-                }
-            }
-            else
-            {
-                await turnContext.SendActivityAsync(MessageFactory.Text("No QnA Maker answers were found."), cancellationToken);
+                await dialogContext.BeginDialogAsync(_dialog.Id, null, cancellationToken);
             }
         }
     }
