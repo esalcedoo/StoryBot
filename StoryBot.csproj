@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <UserSecretsId>c9ca25f8-4537-4ff9-b62d-8e9cd87e002a</UserSecretsId>
+    <UserSecretsId>ba77a286-d12f-4cac-a575-fe3fe83ff91e</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

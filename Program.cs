@@ -5,7 +5,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace QnABot
+namespace StoryBot
 {
     public class Program
     {

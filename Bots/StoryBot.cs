@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
-using QnABot.Models;
-using QnABot.Services;
+using StoryBot.Models;
+using StoryBot.Services;
 
-namespace QnABot.Bots
+namespace StoryBot.Bots
 {
-    public class QnABot : ActivityHandler
+    public class StoryBot : ActivityHandler
     {
-        private readonly ILogger<QnABot> _logger;
+        private readonly ILogger<StoryBot> _logger;
         private readonly QnAService _qnAService;
 
-        public QnABot(ILogger<QnABot> logger, QnAService qnaService)
+        public StoryBot(ILogger<StoryBot> logger, QnAService qnaService)
         {
             _logger = logger;
             _qnAService = qnaService;
