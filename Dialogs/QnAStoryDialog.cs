@@ -39,13 +39,13 @@ namespace StoryBot.Dialogs
                 {
                     await dc.Context.SendActivityAsync(
                         MessageFactory.SuggestedActions(
-                            suggestedActions,
-                            qnaResult.Answer), cancellationToken);
+                            suggestedActions, qnaResult.Answer.Text,
+                            qnaResult.Answer.SSML), cancellationToken);
                 }
                 else
                 {
                     await dc.Context.SendActivityAsync(
-                        MessageFactory.Text(qnaResult.Answer), cancellationToken);
+                        MessageFactory.Text(qnaResult.Answer.Text, qnaResult.Answer.SSML), cancellationToken);
                 }
             }
             return await dc.EndDialogAsync(cancellationToken: cancellationToken);

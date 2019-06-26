@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using Bot.Builder.Community.Adapters.Alexa.Integration.AspNet.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,19 @@ namespace StoryBot
 
             services.AddQnAService(_configuration);
 
+            services.AddSingleton<IAlexaHttpAdapter>((sp) =>
+            {
+                var alexaHttpAdapter = new AlexaHttpAdapter(validateRequests: true)
+                {
+                    OnTurnError = async (context, exception) =>
+                    {
+                        await context.SendActivityAsync("<say-as interpret-as=\"interjection\">boom</say-as>, explotó.");
+                    },
+                    ShouldEndSessionByDefault = true,
+                    ConvertBotBuilderCardsToAlexaCards = false
+                };
+                return alexaHttpAdapter;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,6 +84,7 @@ namespace StoryBot
 
             //app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseAlexa();
         }
     }
 }

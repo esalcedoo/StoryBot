@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using StoryBot.Converters;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace StoryBot.Models
 {
@@ -9,10 +12,18 @@ namespace StoryBot.Models
 
     public class QnAAnswerModel
     {
-        public string Answer { get; set; }
+        [JsonConverter(typeof(EmbeddedJsonConverter))]
+        public Answer Answer { get; set; }
         public float Score { get; set; }
         public int Id { get; set; }
         public Context Context { get; set; }
+    }
+
+    public class Answer
+    {
+        public string SSML { get; set; }
+        public string Text { get; set; }
+        public string Image { get; set; }
     }
 
     public class Context

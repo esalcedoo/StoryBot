@@ -31,5 +31,7 @@ namespace StoryBot.Controllers
             // The adapter will invoke the bot.
             await _adapter.ProcessAsync(Request, Response, _bot);
         }
+
+
     }
 }
