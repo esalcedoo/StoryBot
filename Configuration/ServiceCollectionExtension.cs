@@ -15,7 +15,7 @@ namespace StoryBot.Configuration
         {
             services.AddHttpClient<QnAService>(client =>
                 {
-                    QnAMakerService qnAMakerService = configuration.GetSection(nameof(QnAMakerService)).Get<QnAMakerService>();
+                    QnAMakerService qnAMakerService = configuration.GetSection(nameof(QnAMakerService)).Get<QnAMakerService>() ?? new QnAMakerService();
 
                     qnAMakerService.Validate();
 

@@ -60,8 +60,8 @@ namespace StoryBot
                     {
                         await context.SendActivityAsync("<say-as interpret-as=\"interjection\">boom</say-as>, explotó.");
                     },
-                    ShouldEndSessionByDefault = true,
-                    ConvertBotBuilderCardsToAlexaCards = false
+                    ShouldEndSessionByDefault = false,
+                    ConvertBotBuilderCardsToAlexaCards = true
                 };
                 return alexaHttpAdapter;
             });

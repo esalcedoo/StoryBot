@@ -9,7 +9,7 @@ using Microsoft.Bot.Builder;
 
 namespace StoryBot.Controllers
 {
-    [Route("api/AlexaStorySkill/messages")]
+    [Route("api/skillrequests")]
     [ApiController]
     public class AlexaSkillController : ControllerBase
     {
