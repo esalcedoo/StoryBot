@@ -9,46 +9,27 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using StoryBot.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Bot.Schema;
 namespace StoryBot.Bots
 {
     public class StoryBot<T> : ActivityHandler where T : Dialog
     {
         protected readonly Dialog _dialog;
         private readonly ILogger<StoryBot<T>> _logger;
-        private readonly QnAService _qnAService;
         protected readonly BotState _conversationState;
 
-        public StoryBot(T dialog, ILogger<StoryBot<T>> logger, QnAService qnaService, ConversationState conversationState)
+        public StoryBot(T dialog, ILogger<StoryBot<T>> logger, ConversationState conversationState)
         {
             _logger = logger;
-            _qnAService = qnaService;
             _conversationState = conversationState;
             _dialog = dialog;
         }
-        public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
+
+        public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default)
         {
             await base.OnTurnAsync(turnContext, cancellationToken);
 
             // Save any state changes that might have occured during the turn.
             await _conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
-
-            switch (turnContext.Activity.Type)
-            {
-                case "LaunchRequest":
-                    break;
-                case "SpeechStarted":
-                    await OnMessageActivityAsync(turnContext as ITurnContext<IMessageActivity>, cancellationToken);
-                    break;
-                case "IntentRequest":
-                    //await OnMessageActivityAsync(new Microsoft.Bot.Builder.DelegatingTurnContext<IMessageActivity>(turnContext), cancellationToken);
-                    break;
-            }
         }
         
         protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)

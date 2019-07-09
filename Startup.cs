@@ -3,6 +3,7 @@
 
 using System;
 using Bot.Builder.Community.Adapters.Alexa.Integration.AspNet.Core;
+using Bot.Builder.Community.Adapters.Alexa.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -61,8 +62,9 @@ namespace StoryBot
                         await context.SendActivityAsync("<say-as interpret-as=\"interjection\">boom</say-as>, explotó.");
                     },
                     ShouldEndSessionByDefault = false,
-                    ConvertBotBuilderCardsToAlexaCards = true
+                    ConvertBotBuilderCardsToAlexaCards = true,
                 };
+                alexaHttpAdapter.Use(new AlexaIntentRequestToMessageActivityMiddleware(transformPattern: RequestTransformPatterns.MessageActivityTextFromSinglePhraseSlotValue));
                 return alexaHttpAdapter;
             });
         }
@@ -83,8 +85,8 @@ namespace StoryBot
             app.UseStaticFiles();
 
             //app.UseHttpsRedirection();
+            //app.UseAlexa();
             app.UseMvc();
-            app.UseAlexa();
         }
     }
 }

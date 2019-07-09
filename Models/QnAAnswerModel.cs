@@ -12,7 +12,7 @@ namespace StoryBot.Models
 
     public class QnAAnswerModel
     {
-        [JsonConverter(typeof(EmbeddedJsonConverter))]
+        [JsonConverter(typeof(AnswerJsonConverter))]
         public Answer Answer { get; set; }
         public float Score { get; set; }
         public int Id { get; set; }

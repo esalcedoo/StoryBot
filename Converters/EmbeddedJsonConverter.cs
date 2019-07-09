@@ -1,24 +1,33 @@
 ﻿using Newtonsoft.Json;
+using StoryBot.Models;
 using System;
 using System.IO;
 
 namespace StoryBot.Converters
 {
-    public class EmbeddedJsonConverter : JsonConverter
+    public class AnswerJsonConverter : JsonConverter<Answer>
     {
-        public override bool CanConvert(Type objectType)
+        public override Answer ReadJson(JsonReader reader, Type objectType, Answer existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            return true;
+            string content = (string)reader.Value;
+            if (IsJson(content))
+            {
+                return serializer.Deserialize(new StringReader((string)reader.Value), objectType) as Answer;
+            }
+            return new Answer()
+            {
+                Text = content
+            };
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            return serializer.Deserialize(new StringReader((string)reader.Value), objectType);
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, Answer value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
+        }
+
+        private static bool IsJson(string value)
+        {
+            return value.Contains('{');
         }
     }
 }
