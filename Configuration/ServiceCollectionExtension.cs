@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Bot.Builder.AI.Luis;
 using Microsoft.Bot.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,16 @@ namespace StoryBot.Configuration
                     client.DefaultRequestHeaders.Add("Authorization", $"EndpointKey {qnAMakerService.EndpointKey}");
                 }
             );
+
+
+            LuisService luisService = configuration.GetSection(nameof(LuisService)).Get<LuisService>();
+            luisService.Validate();
+
+            var app = new LuisApplication(luisService);
+
+            var recognizer = new LuisRecognizer(app);
+            services.AddSingleton(recognizer);
+
             return services;
         }
     }

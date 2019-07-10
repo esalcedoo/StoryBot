@@ -4,25 +4,31 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.AI.Luis;
 using Microsoft.Bot.Builder.Dialogs;
 using StoryBot.Models;
 using StoryBot.Services;
 
 namespace StoryBot.Dialogs
 {
-    public class QnAStoryDialog : Dialog
+    public class QnAStoryDialog : InterruptibleDialog
     {
-        private readonly QnAService _QnAService;
-        public QnAStoryDialog(QnAService qnaService) : base(nameof(QnAStoryDialog))
+        private readonly QnAService _qnAService;
+        public QnAStoryDialog(QnAService qnaService, LuisRecognizer luisRecognizer) : base(nameof(QnAStoryDialog), luisRecognizer)
         {
-            _QnAService = qnaService;
+            _qnAService = qnaService;
+
+            AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[]
+            {
+                QnADialogAsync,
+            }));
+            InitialDialogId = nameof(WaterfallDialog);
         }
 
-        public override async Task<DialogTurnResult> BeginDialogAsync(DialogContext dc, object options = null,
-            CancellationToken cancellationToken = new CancellationToken())
+        public async Task<DialogTurnResult> QnADialogAsync(DialogContext dc, CancellationToken cancellationToken = default)
         {
             // Call QnA Maker and get results.
-            QnAAnswerModel qnaResult = await _QnAService.GenerateAnswer(dc.Context.Activity.Text, dc.Context.Activity.Locale);
+            QnAAnswerModel qnaResult = await _qnAService.GenerateAnswer(dc.Context.Activity.Text, dc.Context.Activity.Locale);
 
             if (qnaResult == null)
             {
