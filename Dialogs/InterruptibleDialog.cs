@@ -18,6 +18,7 @@ namespace StoryBot.Dialogs
         {
             _luisRecognizer = luisRecognizer;
             AddDialog(new HelpDialog());
+            AddDialog(new ResumeDialog());
         }
 
         protected override async Task<DialogTurnResult> OnBeginDialogAsync(DialogContext innerDc, object options, CancellationToken cancellationToken = default)
@@ -48,7 +49,7 @@ namespace StoryBot.Dialogs
             {
                 var luisResult = await _luisRecognizer.RecognizeAsync(innerDc.Context, cancellationToken);
 
-                IList<string> dialogNames = new List<string>() { "Help" };
+                IList<string> dialogNames = new List<string>() { "Help", "Resume" };
 
                 var dialogName = dialogNames.FirstOrDefault(dn => dn.Equals(luisResult.Intents?.FirstOrDefault().Key, StringComparison.InvariantCultureIgnoreCase));
 
