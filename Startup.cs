@@ -28,7 +28,7 @@ namespace StoryBot
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc();
 
             // Add the HttpClientFactory to be used for the QnAMaker calls.
             services.AddHttpClient();
@@ -83,9 +83,6 @@ namespace StoryBot
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
-            //app.UseHttpsRedirection();
-            //app.UseAlexa();
             app.UseMvc();
         }
     }

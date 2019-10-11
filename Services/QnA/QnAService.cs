@@ -3,9 +3,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using StoryBot.Models;
 
-namespace StoryBot.Services
+namespace StoryBot.Services.QnA
 {
     public class QnAService
     {

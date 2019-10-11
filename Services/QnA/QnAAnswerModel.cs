@@ -3,7 +3,7 @@ using StoryBot.Converters;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace StoryBot.Models
+namespace StoryBot.Services.QnA
 {
     public class QnaResponse
     {
@@ -24,6 +24,7 @@ namespace StoryBot.Models
         public string SSML { get; set; }
         public string Text { get; set; }
         public string Image { get; set; }
+        public string Video { get; set; }
     }
 
     public class Context

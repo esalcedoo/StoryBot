@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
-using StoryBot.Models;
+using StoryBot.Services.QnA;
 using System;
 using System.IO;
 
 namespace StoryBot.Converters
 {
+    /// <summary>
+    /// Used to check if Answer is a JSON
+    /// </summary>
     public class AnswerJsonConverter : JsonConverter<Answer>
     {
         public override Answer ReadJson(JsonReader reader, Type objectType, Answer existingValue, bool hasExistingValue, JsonSerializer serializer)

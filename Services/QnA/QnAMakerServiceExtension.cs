@@ -3,7 +3,7 @@ using Microsoft.Bot.Configuration;
 
 namespace StoryBot.Configuration
 {
-    public static class QnAMakerConnectedServiceExtension
+    public static class QnAMakerServiceExtension
     {
         public static void Validate(this QnAMakerService qnaService)
         {
@@ -21,6 +21,13 @@ namespace StoryBot.Configuration
             {
                 throw new InvalidOperationException("The QnA Host ('hostname') is required to run this sample. Please update your 'appsettings.json' file.");
             }
+        }
+
+        public static bool IsValid(this QnAMakerService qnaService)
+        {
+            return !(string.IsNullOrWhiteSpace(qnaService.KbId)
+                || string.IsNullOrWhiteSpace(qnaService.EndpointKey)
+                || string.IsNullOrWhiteSpace(qnaService.Hostname));
         }
     }
 }
