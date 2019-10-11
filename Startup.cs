@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.Bot.Configuration;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,16 +45,16 @@ namespace StoryBot
 
             // Create the Conversation state. (Used by the Dialog system itself.)
             services.AddSingleton<ConversationState>();
-
             // The Dialog that will be run by the bot.
             services.AddSingleton<QnAStoryDialog>();
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, Bots.StoryBot<QnAStoryDialog>>();
-
-            services.AddQnAService(_configuration);
-
-            services.AddSingleton<IAlexaHttpAdapter>((sp) =>
+                        
+            services.AddLuisService(_configuration.GetSection("LuisService").Get<LuisService>());
+            services.AddQnAService();
+            
+            services.AddSingleton<IAlexaHttpAdapter>(_ =>
             {
                 var alexaHttpAdapter = new AlexaHttpAdapter(validateRequests: true)
                 {
