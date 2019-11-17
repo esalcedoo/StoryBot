@@ -13,12 +13,12 @@ namespace StoryBot.Dialogs
     {
         public LuisRecognizer _luisRecognizer;
 
-        public InterruptibleDialog(string id, LuisRecognizer luisRecognizer)
+        public InterruptibleDialog(string id, LuisRecognizer luisRecognizer, HelpDialog helpDialog, ResumeDialog resumeDialog)
             : base(id)
         {
             _luisRecognizer = luisRecognizer;
-            AddDialog(new HelpDialog());
-            AddDialog(new ResumeDialog());
+            AddDialog(helpDialog);
+            AddDialog(resumeDialog);
         }
 
         protected override async Task<DialogTurnResult> OnBeginDialogAsync(DialogContext innerDc, object options, CancellationToken cancellationToken = default)

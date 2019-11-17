@@ -25,9 +25,6 @@ namespace StoryBot
         {
             services.AddMvc();
 
-            // Add the HttpClientFactory to be used for the QnAMaker calls.
-            services.AddHttpClient();
-
             // Create the credential provider to be used with the Bot Framework Adapter.
             services.AddSingleton<ICredentialProvider, ConfigurationCredentialProvider>();
 
@@ -39,15 +36,20 @@ namespace StoryBot
 
             // Create the Conversation state. (Used by the Dialog system itself.)
             services.AddSingleton<ConversationState>();
-            // The Dialog that will be run by the bot.
-            services.AddSingleton<QnAStoryDialog>();
-
+            
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, Bots.StoryBot<QnAStoryDialog>>();
-                        
+
+            // Add all Dialogs we are gonna use
+            services.AddDialogs();
+
+            // Add Luis Service
             services.AddLuisService(_configuration.GetSection("LuisService").Get<LuisService>());
+
+            // Add Multiturn QnA Service
             services.AddQnAService();
             
+            // Add Alexa Adapter
             services.AddSingleton<IAlexaHttpAdapter>(_ =>
             {
                 var alexaHttpAdapter = new AlexaHttpAdapter(validateRequests: true)
